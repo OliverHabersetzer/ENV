@@ -1,10 +1,25 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace ENV.Many
 {
     public static class EnumerableExtensions
     {
+        public static void ForEach<T>(IEnumerable<T> enumerable, Action<T> action)
+        {
+            foreach (var element in enumerable)
+                action(element);
+        }
+
+        public static IEnumerable<R> Select<T, R>(IEnumerable<T> enumerable, Func<T, R> func)
+        {
+            List<R> list = new List<R>();
+            foreach (var element in enumerable)
+                list.Add(func(element));
+            return list;
+        }
+
         /// <summary>
         /// Loops over all elements in the enumeration, executing specific actions based on a boolean expression
         /// </summary>
