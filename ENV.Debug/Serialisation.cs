@@ -224,7 +224,7 @@ namespace ENV.Debug
         public static void Print(this object o, string label = "", bool multiline = true, int maxCascadeDepth = -1)
         {
             Console.WriteLine((string.IsNullOrEmpty(label) ? "" : label + " = ") +
-                              o.Serialize(multiline, maxCascadeDepth) + "\n");
+                              o.Serialize(multiline, maxCascadeDepth));
         }
     }
 }
