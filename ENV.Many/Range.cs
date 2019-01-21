@@ -36,6 +36,8 @@ namespace ENV.Many
             } while (index <= interval);
         }
 
+        public IEnumerable ToInt32() => _rangeArray.Select(el => (int) el);
+
         public IEnumerator<long> GetEnumerator()
         {
             return this._rangeArray.AsEnumerable().GetEnumerator();
