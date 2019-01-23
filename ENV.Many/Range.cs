@@ -14,7 +14,6 @@ namespace ENV.Many
         public static Range Exclusive(long to) => new Range(0, to - 1);
         public static Range Exclusive(long from, long to) => new Range(from, to - 1);
 
-
         public Range(long to) : this(0, to)
         {
         }
