@@ -1,6 +1,6 @@
 using System;
 
-namespace ENV.Debug
+namespace ENV.Runtime
 {
     public interface ISpecialSerialisation
     {

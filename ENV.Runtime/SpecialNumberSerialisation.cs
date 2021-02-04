@@ -1,6 +1,6 @@
 using System;
 
-namespace ENV.Debug
+namespace ENV.Runtime
 {
     internal class SpecialNumberSerialisation : ISpecialSerialisation
     {

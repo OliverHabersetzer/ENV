@@ -1,18 +1,18 @@
 using System;
 
-namespace ENV.Debug
+namespace ENV.Runtime
 {
-    internal class SpecialCharSerialisation : ISpecialSerialisation
+    internal class SpecialStringSerialisation : ISpecialSerialisation
     {
         public Type[] CompatibleTypes => new Type[]
         {
-            typeof(char),
-            typeof(Char),
+            typeof(string),
+            typeof(String),
         };
 
         public string Serialize(object o, bool minimizeSerialisation)
         {
-            return "'" + o + "'";
+            return "\"" + o + "\"";
         }
     }
 }

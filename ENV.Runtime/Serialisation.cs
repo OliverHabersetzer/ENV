@@ -1,34 +1,20 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ENV.Many;
-using ENV.Runtime;
 
-namespace ENV.Debug
+namespace ENV.Runtime
 {
     public static class Serialisation
     {
-        public static readonly PluginManager<ISpecialSerialisation> SpecialSerialisationManager =
-            new PluginManager<ISpecialSerialisation>();
+        private static readonly PluginManager<ISpecialSerialisation> SpecialSerialisationManager = new();
 
-        public static ISpecialSerialisation[] SpecialSerialisations = new ISpecialSerialisation[0];
+        private static readonly ISpecialSerialisation[] SpecialSerialisations = SpecialSerialisationManager
+            .LoadPlugins()
+            .Select(pluginType => SpecialSerialisationManager.InstantiatePlugin(pluginType))
+            .ToArray();
 
-        static Serialisation()
-        {
-            LoadSpecialSerialisations();
-        }
-
-        public static ISpecialSerialisation[] LoadSpecialSerialisations()
-        {
-            return SpecialSerialisations = SpecialSerialisationManager
-                .LoadPlugins()
-                .Select(pluginType => SpecialSerialisationManager.InstantiatePlugin(pluginType))
-                .ToArray();
-        }
-
-        private static string GetTypeName(Type t, Object o, ref Array array)
+        private static string GetTypeName(Type t, object o, ref Array array)
         {
             string typeName = t.Name;
             Type[] generics;
@@ -70,15 +56,15 @@ namespace ENV.Debug
             return typeName + genericsString + size;
         }
 
-        public static string Serialize(this object o, bool multiline = true, int maxCascadeDepth = -1)
+        public static string Serialize(this object o, int maxCascadeDepth = -1)
         {
             if (maxCascadeDepth < 0)
                 maxCascadeDepth = 10;
-            
-            return o.Serialize(0, multiline, maxCascadeDepth);
+
+            return o.Serialize(0, maxCascadeDepth);
         }
 
-        private static string Serialize(this object o, int depth, bool multiline = true, int maxCascadeDepth = -1)
+        private static string Serialize(this object o, int depth, int maxCascadeDepth)
         {
             if (o == null)
                 return "null";
@@ -160,7 +146,7 @@ namespace ENV.Debug
                             for (var i = 0; i < indices.Length; i++)
                                 result += indices[i] + ((i == indices.Length - 1) ? "] = " : ", ");
 
-                            result += array.GetValue(indices).Serialize(depth + 1, multiline, maxCascadeDepth);
+                            result += array.GetValue(indices).Serialize(depth + 1, maxCascadeDepth);
 
                             for (int i = rank - 1; i >= 0; i--)
                             {
@@ -204,7 +190,7 @@ namespace ENV.Debug
                             {
                                 object subObject = properties[i].GetValue(o);
                                 result += "\t".Repeat(depth + 1) + properties[i].Name + " = " +
-                                          subObject.Serialize(depth + 1, multiline, maxCascadeDepth) +
+                                          subObject.Serialize(depth + 1, maxCascadeDepth) +
                                           (i < properties.Length - 1 ? ", " : "") + "\n";
                             }
                         }
@@ -219,12 +205,6 @@ namespace ENV.Debug
             }
 
             return result + " : " + typeName;
-        }
-
-        public static void Print(this object o, string label = "", bool multiline = true, int maxCascadeDepth = -1)
-        {
-            Console.WriteLine((string.IsNullOrEmpty(label) ? "" : label + " = ") +
-                              o.Serialize(multiline, maxCascadeDepth));
         }
     }
 }
